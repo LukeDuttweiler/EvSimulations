@@ -14,7 +14,8 @@
 #' @param bindRates A numeric vector representing the binding rates of antibodies. Number of antibodies is length(bindRates). length(bindRates) and length(prevRates) must be equal. Default is \code{rep(1, 10)}.
 #' @param nonSpecBindRate A numeric value representing the non-specific binding rate of antibodies. Default is \code{.005}.
 #' @param maxProteins A numeric value specifying the maximum number of proteins that can exist in a single EV. Default is \code{15}.
-#' @param maxBinds A numeric value specifying the maximum number of bindings allowed in a single EV. Default is \code{15}.
+#' @param maxBinds A numeric value specifying the maximum number of bindings allowed in a single EV. Default is \code{15}
+#' @param ... Catch unecessary arguments from scenario functions.
 #'
 #' @return A list of binary matrices, each corresponding to a FOV. In each matrix, rows represent EVs and columns represent the binding of antibodies.
 #'
@@ -26,10 +27,11 @@
 genFOVs <- function(evCount = 1e5,
                     fovDist = rep(1, 31)/31,
                     prevRates = rep(.5, 10),
-                    bindRates = rep(1, 10),
+                    bindRates = rep(1, length(prevRates)),
                     nonSpecBindRate = .005,
                     maxProteins = 10,
-                    maxBinds = 10){
+                    maxBinds = 10,
+                    ...){
   #Make sure fovDist sums to 1
   if(!all.equal(sum(fovDist), 1)){
     stop('fovDist must sum to 1')
@@ -100,4 +102,16 @@ rowShrink <- function(binVec, maxSum){
     binVec[whichOnes] <- 0
     return(binVec)
   }
+}
+
+#Helper function from stackOverflow, catches all calls including defaults
+match.call.defaults <- function(...) {
+  call <- evalq(match.call(expand.dots = FALSE), parent.frame(1))
+  formals <- evalq(formals(), parent.frame(1))
+
+  for(i in setdiff(names(formals), names(call)))
+    call[i] <- list( formals[[i]] )
+
+
+  match.call(sys.function(sys.parent()), call)
 }
