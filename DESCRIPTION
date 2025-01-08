@@ -1,0 +1,10 @@
+Package: EvSimulations
+Title: Functions for Simulations for SiMPore Inc. Simulation Study on Protein Detection Rates in EVs
+Version: 0.0.0.9000
+Authors@R: 
+    person("Luke", "Duttweiler", , "lduttweiler@hsph.harvard.edu", role = c("aut", "cre"))
+Description: This package contains functions that may be used to run simulations for the SiMPore Inc. simulation study on rates of detection of proteins in EVs. Description of how to run each individual simulation are contained in the README.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
