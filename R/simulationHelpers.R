@@ -15,6 +15,7 @@
 #' @param nonSpecBindRate A numeric value representing the non-specific binding rate of antibodies. Default is \code{.005}.
 #' @param maxProteins A numeric value specifying the maximum number of proteins that can exist in a single EV. Default is \code{15}.
 #' @param maxBinds A numeric value specifying the maximum number of bindings allowed in a single EV. Default is \code{15}
+#' @param bloodDrawEV A numeric value representing the total number of EVs in the blood draw, from which evCount is a small portion that is experimented on
 #' @param ... Catch unecessary arguments from scenario functions.
 #'
 #' @return A list of binary matrices, each corresponding to a FOV. In each matrix, rows represent EVs and columns represent the binding of antibodies.
@@ -31,6 +32,7 @@ genFOVs <- function(evCount = 1e5,
                     nonSpecBindRate = .005,
                     maxProteins = 10,
                     maxBinds = 10,
+                    bloodDrawEV = 1e8,
                     ...){
   #Make sure fovDist sums to 1
   if(!all.equal(sum(fovDist), 1)){
@@ -42,18 +44,41 @@ genFOVs <- function(evCount = 1e5,
     stop('prevRates and bindRates must have the same number of entries')
   }
 
+  #Make sure bloodDrawEV is greater than evCount
+  if(evCount > bloodDrawEV){
+    stop('there must be more EVs in the blood draw than go into the experiment')
+  }
+
+  #Get protein values for full blood draw
+  bloodDrawMat <- sapply(prevRates, function(r){
+    rbinom(bloodDrawEV, 1, r)
+  })
+
   #Get number of EVs per FOV
-  evFOV <- evCount*fovDist
+  evFOV <- ceiling(evCount*fovDist)
+
+  #Get which EVs are in each FOV (sampling from bloodDrawMat rows without replacement)
+  evWhich <- vector('list', length(evFOV))
+  rowsUsed <- vector('integer')
+  for(i in 1:length(evWhich)){
+    rowSamp <- sample(bloodDrawEV, evFOV[i])
+    stp <- 0 #Emergency stopper for while loop
+    while(any(rowSamp) %in% rowsUsed & stp < 100){
+      badRows <- which(rowSamp %in% rowsUsed)
+      rowSamp[badRows] <- rowSamp[badRows] + 1
+      stp <- stp + 1
+    }
+    rowsUsed <- c(rowsUsed, rowSamp)
+    evWhich[[i]] <- rowSamp
+  }
 
   #Per FOV create EVs with protein profiles
   fovs <- lapply(1:length(fovDist), function(i){
     #Number of EVs in this FOV
     n <- evFOV[i]
 
-    #Binary matrix, rows are evs i, columns represent existence of protein j in ev i
-    protMat <- sapply(prevRates, function(r){
-      rbinom(n, 1, r)
-    })
+    #Binary matrix sampled from bloodDraw, rows are evs i, columns represent existence of protein j in ev i
+    protMat <- bloodDrawMat[evWhich[[i]],]
     #Make sure number of proteins does not exceed max
     protMat <- t(apply(protMat, 1, rowShrink, maxSum = maxProteins))
 
@@ -77,6 +102,9 @@ genFOVs <- function(evCount = 1e5,
 
     return(bindMat)
   })
+
+  rm(bloodDrawMat)
+  gc()
   return(fovs)
 }
 

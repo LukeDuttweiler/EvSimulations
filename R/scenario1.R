@@ -7,6 +7,7 @@ scenario1 <- function(evCount = 1e5,
                       maxProteins = 10,
                       maxBinds = 10,
                       typeIRate = .01,
+                      bloodDrawEV = 1e8,
                       assumedNonSpecBindRate = nonSpecBindRate){
   #Get arguments, generate FOVs from those arguments
   argg <- as.list(match.call.defaults())
