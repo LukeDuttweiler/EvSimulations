@@ -1,4 +1,20 @@
-## This function runs a single instance of SiMPore Scenario 1
+#' Run a Single Instance of SiMPore Scenario 1
+#'
+#' This function runs a simulation for SiMPore Scenario 1, which analyzes field of view (FOV) data, and tests for protein prevalence using a Bonferroni-adjusted alpha threshold for hypothesis testing.
+#'
+#' @inheritParams genFOVs
+#' @param typeIRate Numeric value indicating the family-wise type one error rate desired. Defaults to .01.
+#' @param assumedNonSpecBindRate Numeric value indicating the assumed non-specific binding rate used in the hypothesis test. Defaults to `nonSpecBindRate`.
+#'
+#' @return A list with two components:
+#' \describe{
+#'   \item{Results}{A data frame containing the true prevalence, observed prevalence, protein existence flag, test result flag, type 1 error flag, and type 2 error flag for each protein.}
+#'   \item{Params}{A list of the parameters used for generating the simulation results.}
+#' }
+#'
+#' @seealso \link{genFOVs}
+#'
+#' @export
 scenario1 <- function(evCount = 1e5,
                       fovDist = rep(1, 31)/31,
                       prevRates = rep(.5, 10),
@@ -6,8 +22,8 @@ scenario1 <- function(evCount = 1e5,
                       nonSpecBindRate = .005,
                       maxProteins = 10,
                       maxBinds = 10,
-                      typeIRate = .01,
                       bloodDrawEV = 1e8,
+                      typeIRate = .01,
                       assumedNonSpecBindRate = nonSpecBindRate){
   #Get arguments, generate FOVs from those arguments
   argg <- as.list(match.call.defaults())

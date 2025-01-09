@@ -15,14 +15,10 @@
 #' @param nonSpecBindRate A numeric value representing the non-specific binding rate of antibodies. Default is \code{.005}.
 #' @param maxProteins A numeric value specifying the maximum number of proteins that can exist in a single EV. Default is \code{15}.
 #' @param maxBinds A numeric value specifying the maximum number of bindings allowed in a single EV. Default is \code{15}
-#' @param bloodDrawEV A numeric value representing the total number of EVs in the blood draw, from which evCount is a small portion that is experimented on
+#' @param bloodDrawEV A numeric value representing the total number of EVs in the blood draw, from which evCount is a small portion that is experimented on. Defaults to 1e8. Really shouldn't try to set higher than this.
 #' @param ... Catch unecessary arguments from scenario functions.
 #'
 #' @return A list of binary matrices, each corresponding to a FOV. In each matrix, rows represent EVs and columns represent the binding of antibodies.
-#'
-#' @examples
-#' fovs <- genFOVs(evCount = 1e5, fovDist = rep(1, 31)/31, prevRates = rep(.5, 10),
-#'                bindRates = rep(1, 10), nonSpecBindRate = .005, maxProteins = 10, maxBinds = 10)
 #'
 #' @export
 genFOVs <- function(evCount = 1e5,
