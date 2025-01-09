@@ -27,7 +27,10 @@ scenario1 <- function(evCount = 1e5,
                       assumedNonSpecBindRate = nonSpecBindRate){
   #Get arguments, generate FOVs from those arguments
   argg <- as.list(match.call.defaults())
-  fovs <- do.call('genFOVs', argg)
+  #fovs <- do.call('genFOVs', argg)
+  fovs <- genFOVs(evCount = evCount, fovDist = fovDist, prevRates = prevRates,
+                  bindRates = bindRates, nonSpecBindRate = nonSpecBindRate,
+                  maxProteins = maxProteins, maxBinds = maxBinds, bloodDrawEV = bloodDrawEV)
 
   #For scenario 1 we don't care about FOVs specifically, so collapse into one matrix
   evs <- do.call('rbind', fovs)
