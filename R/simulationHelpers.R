@@ -8,7 +8,7 @@
 #' utilizes parameters such as the number of EVs, prevalence rates, binding rates, and others to
 #' generate a list of binary matrices indicating the binding profiles for each FOV.
 #'
-#' @param evCount A numeric value representing the total number of extracellular vesicles (EVs) to be simulated across all FOVs. Default is \code{1e5}.
+#' @param particleCount A numeric value representing the total number of particles to be simulated across all FOVs. EVs represent about .15 percent of these particles. Default is \code{1e5}.
 #' @param fovDist A numeric vector representing the distribution of EVs across the FOVs. The values should sum to 1. The number of FOVs desired is length(fovDist). Default is \code{rep(1, 31)/31}.
 #' @param prevRates A numeric vector representing the prevalence rates of proteins. Number of different proteins is length(prevRates) Default is \code{rep(.5, 10)}.
 #' @param bindRates A numeric vector representing the binding rates of antibodies. Number of antibodies is length(bindRates). length(bindRates) and length(prevRates) must be equal. Default is \code{rep(1, 10)}.
@@ -21,7 +21,7 @@
 #' @return A list of binary matrices, each corresponding to a FOV. In each matrix, rows represent EVs and columns represent the binding of antibodies.
 #'
 #' @export
-genFOVs <- function(evCount = 1e5,
+genFOVs <- function(particleCount = 1e5,
                     fovDist = rep(1, 31)/31,
                     prevRates = rep(.5, 10),
                     bindRates = rep(1, length(prevRates)),
@@ -40,15 +40,20 @@ genFOVs <- function(evCount = 1e5,
     stop('prevRates and bindRates must have the same number of entries')
   }
 
-  #Make sure bloodDrawEV is greater than evCount
-  if(evCount > bloodDrawEV){
-    stop('there must be more EVs in the blood draw than go into the experiment')
+  #Make sure enough particles are loaded
+  if(particleCount <= 1e3){
+    stop('not enough particles loaded to detect anything.')
   }
 
   #Get protein values for full blood draw
   bloodDrawMat <- sapply(prevRates, function(r){
     rbinom(bloodDrawEV, 1, r)
   })
+
+  #Get evCount as a random count (from a scaled beta distribution) of the particles input into the system
+  lowLim <- particleCount/1e3
+  uppLim <- particleCount/1e2
+  evCount <- (uppLim - lowLim)*rbeta(1, 2, 5) + lowLim
 
   #Get number of EVs per FOV
   evFOV <- ceiling(evCount*fovDist)

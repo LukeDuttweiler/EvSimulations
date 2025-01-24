@@ -15,7 +15,7 @@
 #' @seealso \link{genFOVs}
 #'
 #' @export
-scenario1 <- function(evCount = 1e5,
+scenario1 <- function(particleCount = 1e5,
                       fovDist = rep(1, 31)/31,
                       prevRates = rep(.5, 10),
                       bindRates = rep(1, length(prevRates)),
@@ -28,12 +28,15 @@ scenario1 <- function(evCount = 1e5,
   #Get arguments, generate FOVs from those arguments
   argg <- as.list(match.call.defaults())
   #fovs <- do.call('genFOVs', argg)
-  fovs <- genFOVs(evCount = evCount, fovDist = fovDist, prevRates = prevRates,
+  fovs <- genFOVs(particleCount = particleCount, fovDist = fovDist, prevRates = prevRates,
                   bindRates = bindRates, nonSpecBindRate = nonSpecBindRate,
                   maxProteins = maxProteins, maxBinds = maxBinds, bloodDrawEV = bloodDrawEV)
 
   #For scenario 1 we don't care about FOVs specifically, so collapse into one matrix
   evs <- do.call('rbind', fovs)
+
+  #Get number of evs
+  evCount <- nrow(evs)
 
   #Get percentage estimates of prevalence per protein
   protEsts <- colMeans(evs)
@@ -50,6 +53,7 @@ scenario1 <- function(evCount = 1e5,
                     'TestExists' = zs > -qnorm(alphBon))
   res$Type1Error <- !res$ProteinExists & res$TestExists
   res$Type2Error <- res$ProteinExists & !res$TestExists
+  res$EVCount <- evCount
   ret <- list('Results' = res, 'Params' = argg)
 
   return(ret)
