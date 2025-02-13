@@ -2,5 +2,6 @@
 
 export(genFOVs)
 export(scenario1)
+export(scenario2)
 importFrom(stats,qnorm)
 importFrom(stats,rbinom)

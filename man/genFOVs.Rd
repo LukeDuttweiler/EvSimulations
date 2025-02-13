@@ -5,7 +5,7 @@
 \title{Generate Field of Vision (FOV) Data}
 \usage{
 genFOVs(
-  evCount = 1e+05,
+  particleCount = 1e+05,
   fovDist = rep(1, 31)/31,
   prevRates = rep(0.5, 10),
   bindRates = rep(1, length(prevRates)),
@@ -17,7 +17,7 @@ genFOVs(
 )
 }
 \arguments{
-\item{evCount}{A numeric value representing the total number of extracellular vesicles (EVs) to be simulated across all FOVs. Default is \code{1e5}.}
+\item{particleCount}{A numeric value representing the total number of particles to be simulated across all FOVs. EVs represent about .15 percent of these particles. Default is \code{1e5}.}
 
 \item{fovDist}{A numeric vector representing the distribution of EVs across the FOVs. The values should sum to 1. The number of FOVs desired is length(fovDist). Default is \code{rep(1, 31)/31}.}
 
