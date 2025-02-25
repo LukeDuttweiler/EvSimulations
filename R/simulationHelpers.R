@@ -57,6 +57,7 @@ genFOVs <- function(particleCount = 1e5,
 
   #Get number of EVs per FOV
   evFOV <- ceiling(evCount*fovDist)
+  print(evFOV)
 
   #Get which EVs are in each FOV (sampling from bloodDrawMat rows without replacement)
   evWhich <- vector('list', length(evFOV))
@@ -79,7 +80,8 @@ genFOVs <- function(particleCount = 1e5,
     n <- evFOV[i]
 
     #Binary matrix sampled from bloodDraw, rows are evs i, columns represent existence of protein j in ev i
-    protMat <- bloodDrawMat[evWhich[[i]],]
+    protMat <- bloodDrawMat[evWhich[[i]],,drop = F]
+
     #Make sure number of proteins does not exceed max
     protMat <- t(apply(protMat, 1, rowShrink, maxSum = maxProteins))
 
